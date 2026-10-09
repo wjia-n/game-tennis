@@ -1,17 +1,29 @@
-# tictactoe
+# Tennis 🎾
 
-A new Flutter project.
+Court-club tennis by Wajiha — drag along the baseline, time your swings, and
+win the set with real tennis scoring (15-30-40, deuce, tiebreaks).
 
-## Getting Started
+## Play
 
-This project is a starting point for a Flutter application.
+- **Vs CPU** (Easy / Medium / Hard) or **2-player pass-and-play** on one device.
+- Drag to slide, tap SERVE / HIT (or tap your half) to swing.
+- First to 4 games (win by 2); 3–3 goes to a 7-point tiebreak.
 
-A few resources to get you started if this is your first Flutter project:
+## Project layout
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- `lib/engine/tennis_engine.dart` — match state machine, ball physics, AI,
+  watchdog. The engine owns ALL phases; the UI only renders and forwards input.
+- `lib/screens/` — splash (company moment → game splash), menu, match,
+  settings, Pro, custom court creator.
+- `lib/services/` — `TennisAudio` (synthesized WAV music/SFX, cached, busy-guarded),
+  `TennisSettings` (persisted settings incl. order-safe player-name JSON),
+  `StoreService` (real `in_app_purchase`: `tennispro` / `tenniscoffee` / `tennischocolate`).
+- `lib/theme/` — 14 court themes, 8 racket styles, 8 ball styles + custom theme creator.
+- `RULES.md` — the authoritative rules document (13 sections).
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Build
+
+CI (`.github/workflows/build.yml`, manual dispatch) runs `flutter pub get`,
+`flutter analyze`, then release-signs and builds APK + AAB.
+
+Package: `com.gameswajiha.tennis`
