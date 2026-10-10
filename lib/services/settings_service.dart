@@ -63,7 +63,7 @@ class TennisSettings extends ChangeNotifier {
   int wins = 0;
   int matchesPlayed = 0;
   int longestRally = 0; // most shots in one rally
-  bool isPro = false;
+  bool isPro = true; // everything unlocked — no Pro version
 
   /// Custom theme colors (ARGB ints). Defaults mirror Wimbledon Grass.
   Map<String, int> customColors = Map.of(_defaultCustomColors);
@@ -130,7 +130,7 @@ class TennisSettings extends ChangeNotifier {
     wins = p.getInt(_kWins) ?? 0;
     matchesPlayed = p.getInt(_kMatches) ?? 0;
     longestRally = p.getInt(_kLongestRally) ?? 0;
-    isPro = p.getBool(_kIsPro) ?? false;
+    isPro = true; // everything unlocked
     for (final k in _defaultCustomColors.keys) {
       customColors[k] =
           p.getInt('$_kCustomPrefix$k') ?? _defaultCustomColors[k]!;

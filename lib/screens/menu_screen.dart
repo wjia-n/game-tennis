@@ -40,26 +40,10 @@ class _MenuScreenState extends State<MenuScreen> {
     _store.init().then((_) {
       if (mounted) setState(() {});
     });
-    _store.proPurchased.addListener(_onPro);
     _store.lastThanks.addListener(_onThanks);
   }
 
-  void _onPro() {
-    if (_store.proPurchased.value && mounted) {
-      _s.setPro(true);
-      widget.audio.win();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('PRO unlocked — enjoy everything!',
-              style: Tennis.body(15, theme: _t)),
-          backgroundColor: _t.card,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-      _store.proPurchased.value = false;
-    }
-  }
-
+  
   void _onThanks() {
     final msg = _store.lastThanks.value;
     if (msg == null || !mounted) return;
@@ -76,7 +60,6 @@ class _MenuScreenState extends State<MenuScreen> {
 
   @override
   void dispose() {
-    _store.proPurchased.removeListener(_onPro);
     _store.lastThanks.removeListener(_onThanks);
     _store.dispose();
     super.dispose();
