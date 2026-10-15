@@ -88,7 +88,7 @@ class CourtThemes {
     ),
     CourtThemeDef(
       id: 'usopen',
-      name: 'New York Hard',
+      name: 'Metro Hard',
       court: Color(0xFF3A6EA5),
       courtDark: Color(0xFF2F5C8A),
       surround: Color(0xFF3E7A44),
@@ -105,7 +105,7 @@ class CourtThemes {
     ),
     CourtThemeDef(
       id: 'ausopen',
-      name: 'Melbourne Hard',
+      name: 'Championship Hard',
       court: Color(0xFF2E5FB8),
       courtDark: Color(0xFF274F9C),
       surround: Color(0xFF2A8A7E),

@@ -18,6 +18,9 @@ import 'package:audioplayers/audioplayers.dart';
 ///   resumes exactly where it left off instead of restarting or dying.
 /// - Every public method catches player errors; audio can never crash the app.
 class TennisAudio {
+  /// Per-game pitch character (tennis): 1.32x. Makes SFX unique.
+  static const double _pitchMul = 1.320;
+
   static const int _rate = 22050;
   final AudioPlayer _sfx = AudioPlayer();
   final AudioPlayer _music = AudioPlayer();
@@ -104,6 +107,8 @@ class TennisAudio {
 
   List<double> _tone(double freq, double secs,
       {double freqEnd = 0, double attack = 0.02, double harmonics = 0.25}) {
+    freq *= _pitchMul;
+    freqEnd *= _pitchMul;
     final n = (_rate * secs).round();
     final out = List<double>.filled(n, 0);
     for (int i = 0; i < n; i++) {
@@ -220,12 +225,12 @@ class TennisAudio {
       _cache.putIfAbsent(key, () => _wav(build()));
 
   Uint8List _menuBytes() => _clip('music_menu', () {
-        // Warm club-house pad: C – Am – F – G, 16s loop.
+        // G# 3 – 0 – 4 – 5 warm pad, 16s loop. Unique to tennis.
         final seq = [
-          [261.63, 329.63, 392.0], // C
-          [220.0, 261.63, 329.63], // Am
-          [174.61, 220.0, 261.63], // F
-          [196.0, 246.94, 293.66], // G
+          [277.18, 349.22, 415.30],
+          [207.65, 261.62, 311.12],
+          [311.12, 391.99, 466.16],
+          [349.22, 415.30, 523.25]
         ];
         final out = <double>[];
         for (final chord in seq) {
@@ -234,33 +239,27 @@ class TennisAudio {
         return out;
       });
 
+
   Uint8List _gameBytes() => _clip('music_game', () {
-        // Match-day groove: soft kick pulse + pentatonic plucks, 12s loop.
-        final n = (_rate * 12).round();
-        final out = List<double>.filled(n, 0.0);
-        // Gentle kick on each beat (4/4 at ~100bpm => 0.6s per beat).
-        for (int b = 0; b < 20; b++) {
-          final start = (_rate * 0.6 * b).round();
-          final len = (_rate * 0.12).round();
-          for (int i = 0; i < len && start + i < n; i++) {
-            final t = i / _rate;
-            out[start + i] +=
-                0.28 * sin(2 * pi * 62 * t) * exp(-t * 30);
+        // G# bass + melody 3 – 0 – 4 – 5, 16s loop. Unique to tennis.
+        final bassNotes = [138.59, 103.83, 155.56, 174.61];
+        final melNotes = [830.60, 622.24, 932.32, 1046.50];
+        final out = List<double>.filled((_rate * 16).round(), 0);
+        final segLen = (_rate * 4).round();
+        for (int s = 0; s < 4; s++) {
+          final bass = _tone(bassNotes[s], 3.5, harmonics: 0.4);
+          final mel = _tone(melNotes[s], 1.2, harmonics: 0.25);
+          for (int i = 0; i < bass.length && s * segLen + i < out.length; i++) {
+            out[s * segLen + i] += bass[i] * 0.5;
           }
-        }
-        final plucks = [
-          392.0, 440.0, 523.25, 587.33, 659.25, 587.33, 523.25, 440.0,
-          392.0, 329.63,
-        ];
-        for (int k = 0; k < plucks.length; k++) {
-          final start = (n * k / plucks.length).round();
-          final tone = _tone(plucks[k], 0.5, harmonics: 0.3);
-          for (int i = 0; i < tone.length && start + i < n; i++) {
-            out[start + i] += tone[i] * 0.30;
+          final melStart = s * segLen + segLen ~/ 4;
+          for (int i = 0; i < mel.length && melStart + i < out.length; i++) {
+            out[melStart + i] += mel[i] * 0.35;
           }
         }
         return out;
       });
+
 
   // ------------------------------------------------------------------ SFX
   Future<void> _play(Uint8List bytes) async {
