@@ -8,6 +8,7 @@ import '../services/settings_service.dart';
 import '../theme/court_themes.dart';
 import '../theme/tennis_style.dart';
 import 'pro_screen.dart';
+import '../transfer/transfer_ui.dart';
 
 /// Settings — sound, players, appearance, support, about.
 class SettingsScreen extends StatefulWidget {
@@ -99,6 +100,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+              TransferSaveTile(gameSlug: 'tennis'),
                   _SectionTitle('Sound', t),
                   ClubCard(
                     theme: t,
